@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>About Me</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;400;700;900&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-0: #05060f;
+    --fg: #eef1ff;
+    --fg-dim: #a4abd6;
+    --card: rgba(255, 255, 255, 0.05);
+    --card-line: rgba(255, 255, 255, 0.14);
+    --glow: rgba(120, 140, 255, 0.35);
+    --a: #7c5cff;
+    --b: #29d3ff;
+    --c: #ff5ca8;
+    --d: #ffd166;
+  }
+
+  [data-theme="light"] {
+    --bg-0: #eef1fb;
+    --fg: #10132b;
+    --fg-dim: #4c5480;
+    --card: rgba(255, 255, 255, 0.6);
+    --card-line: rgba(20, 24, 60, 0.12);
+    --glow: rgba(90, 110, 255, 0.25);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100%;
+    padding: clamp(4.5rem, 9vw, 7rem) clamp(1rem, 5vw, 2rem) 5rem;
+    font-family: "Outfit", system-ui, -apple-system, "Segoe UI", sans-serif;
+    color: var(--fg);
+    background: var(--bg-0);
+    transition: background 0.6s ease, color 0.6s ease;
+  }
+
+  /* ---------- shared backdrop ---------- */
+  .aurora {
+    position: fixed; inset: -30%; z-index: 0;
+    filter: blur(90px); opacity: 0.8; pointer-events: none;
+  }
+  .aurora span {
+    position: absolute; display: block;
+    width: 46vmax; height: 46vmax; border-radius: 50%;
+    mix-blend-mode: screen;
+    animation: drift 22s ease-in-out infinite;
+  }
+  [data-theme="light"] .aurora span { mix-blend-mode: multiply; opacity: 0.5; }
+  .aurora span:nth-child(1) { background: var(--a); top: 2%;  left: 6%;  animation-delay: -2s;  }
+  .aurora span:nth-child(2) { background: var(--b); top: 30%; left: 55%; animation-delay: -8s;  }
+  .aurora span:nth-child(3) { background: var(--c); top: 58%; left: 12%; animation-delay: -14s; }
+  .aurora span:nth-child(4) { background: var(--d); top: 8%;  left: 62%; animation-delay: -19s; }
+
+  @keyframes drift {
+    0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+    33%      { transform: translate3d(12vw, 8vh, 0) scale(1.25); }
+    66%      { transform: translate3d(-9vw, -6vh, 0) scale(0.85); }
+  }
+
+  .grid {
+    position: fixed; inset: 0; z-index: 1; pointer-events: none;
+    background-image:
+      linear-gradient(var(--card-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--card-line) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(circle at 50% 30%, #000 0%, transparent 75%);
+    -webkit-mask-image: radial-gradient(circle at 50% 30%, #000 0%, transparent 75%);
+    opacity: 0.3;
+  }
+
+  /* ---------- chrome ---------- */
+  .nav-btn, .toggle {
+    position: fixed; top: 1.25rem; z-index: 6;
+    height: 46px;
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0 1.1rem;
+    font: inherit; font-size: 0.9rem; font-weight: 700;
+    text-decoration: none;
+    color: var(--fg);
+    background: var(--card);
+    border: 1px solid var(--card-line);
+    border-radius: 999px;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    cursor: pointer;
+    transition: transform 0.18s ease, border-color 0.25s ease;
+  }
+  .nav-btn { left: 1.25rem; }
+  .toggle  { right: 1.25rem; width: 46px; padding: 0; justify-content: center; font-size: 1.1rem; }
+  .nav-btn:hover, .toggle:hover { transform: translateY(-2px); border-color: var(--b); }
+  .nav-btn:focus-visible, .toggle:focus-visible { outline: 2px solid var(--b); outline-offset: 3px; }
+
+  /* ---------- layout ---------- */
+  main {
+    position: relative; z-index: 2;
+    width: min(100%, 960px);
+    margin: 0 auto;
+    display: grid;
+    gap: clamp(1rem, 2.5vw, 1.5rem);
+  }
+
+  .panel {
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+    border-radius: 26px;
+    background: var(--card);
+    border: 1px solid var(--card-line);
+    backdrop-filter: blur(22px) saturate(160%);
+    -webkit-backdrop-filter: blur(22px) saturate(160%);
+    box-shadow: 0 30px 80px -30px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  }
+
+  /* reveal-on-scroll */
+  .reveal { opacity: 0; transform: translateY(26px); transition: opacity 0.7s ease, transform 0.7s cubic-bezier(.2,.9,.2,1); }
+  .reveal.in { opacity: 1; transform: none; }
+
+  /* ---------- hero ---------- */
+  .hero {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: clamp(1.25rem, 4vw, 2.25rem);
+    align-items: center;
+  }
+
+  .avatar {
+    width: clamp(96px, 20vw, 140px);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    display: grid; place-items: center;
+    font-size: clamp(2rem, 6vw, 3rem);
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    color: #fff;
+    background: linear-gradient(135deg, var(--a), var(--b) 45%, var(--c));
+    box-shadow: 0 18px 45px -12px var(--glow);
+    position: relative;
+  }
+  .avatar::after {
+    content: ""; position: absolute; inset: -7px;
+    border-radius: 50%;
+    border: 1px dashed var(--card-line);
+    animation: spin 18s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 0.55rem;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 0.72rem; letter-spacing: 0.24em; text-transform: uppercase;
+    color: var(--fg-dim);
+    padding: 0.4rem 0.9rem;
+    border: 1px solid var(--card-line);
+    border-radius: 999px;
+    margin: 0 0 1rem;
+  }
+  .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #38ef9b;
+    box-shadow: 0 0 0 0 rgba(56, 239, 155, 0.7);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse { to { box-shadow: 0 0 0 12px rgba(56, 239, 155, 0); } }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(2.1rem, 7vw, 3.6rem);
+    font-weight: 900;
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+    background: linear-gradient(100deg, var(--a), var(--b), var(--d), var(--c), var(--a));
+    background-size: 300% 100%;
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    animation: shimmer 9s linear infinite;
+  }
+  @keyframes shimmer { to { background-position: 300% 50%; } }
+
+  .role {
+    margin: 0.5rem 0 0;
+    font-family: "JetBrains Mono", monospace;
+    font-size: clamp(0.8rem, 2vw, 0.95rem);
+    color: var(--fg-dim);
+  }
+
+  h2 {
+    margin: 0 0 1.25rem;
+    font-size: clamp(1.15rem, 3vw, 1.45rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    display: flex; align-items: center; gap: 0.7rem;
+  }
+  h2::before {
+    content: ""; width: 22px; height: 3px; border-radius: 2px;
+    background: linear-gradient(90deg, var(--a), var(--b));
+  }
+
+  p { margin: 0 0 1rem; line-height: 1.75; font-weight: 200; color: var(--fg-dim); font-size: 1.03rem; }
+  p:last-child { margin-bottom: 0; }
+  p strong { color: var(--fg); font-weight: 700; }
+
+  /* ---------- tags ---------- */
+  .tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.25rem; }
+  .tag {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.72rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 999px;
+    border: 1px solid var(--card-line);
+    color: var(--fg-dim);
+    transition: color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  }
+  .tag:hover { color: var(--fg); border-color: var(--b); transform: translateY(-2px); }
+
+  /* ---------- stats ---------- */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: clamp(0.75rem, 2vw, 1.25rem);
+    text-align: center;
+  }
+  .stat .num {
+    font-size: clamp(1.9rem, 5vw, 2.6rem);
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    background: linear-gradient(120deg, var(--b), var(--a));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .stat .lbl {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--fg-dim);
+  }
+
+  /* ---------- skills ---------- */
+  .skills { display: grid; gap: 1.15rem; }
+  .skill-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-size: 0.92rem; margin-bottom: 0.45rem;
+  }
+  .skill-head span:last-child { font-family: "JetBrains Mono", monospace; font-size: 0.75rem; color: var(--fg-dim); }
+  .bar { height: 8px; border-radius: 99px; background: var(--card-line); overflow: hidden; }
+  .bar i {
+    display: block; height: 100%; width: 0;
+    border-radius: 99px;
+    background: linear-gradient(90deg, var(--a), var(--b));
+    transition: width 1.2s cubic-bezier(.2,.9,.2,1);
+  }
+
+  /* ---------- timeline ---------- */
+  .timeline { position: relative; padding-left: 1.75rem; }
+  .timeline::before {
+    content: ""; position: absolute; left: 6px; top: 6px; bottom: 6px;
+    width: 2px; border-radius: 2px;
+    background: linear-gradient(180deg, var(--a), var(--b), transparent);
+  }
+  .item { position: relative; padding-bottom: 1.6rem; }
+  .item:last-child { padding-bottom: 0; }
+  .item::before {
+    content: ""; position: absolute; left: -1.75rem; top: 6px;
+    width: 14px; height: 14px; border-radius: 50%;
+    background: var(--bg-0);
+    border: 2px solid var(--b);
+    box-shadow: 0 0 0 4px var(--glow);
+  }
+  .item .when {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--fg-dim);
+  }
+  .item .what { font-weight: 700; margin: 0.2rem 0 0.3rem; font-size: 1.02rem; }
+  .item p { margin: 0; font-size: 0.95rem; }
+
+  /* ---------- contact ---------- */
+  .links { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+  .link {
+    display: inline-flex; align-items: center; gap: 0.55rem;
+    padding: 0.85rem 1.5rem;
+    border-radius: 999px;
+    text-decoration: none;
+    font-weight: 700; font-size: 0.92rem;
+    color: #fff;
+    background: linear-gradient(120deg, var(--a), var(--b));
+    background-size: 200% 100%;
+    box-shadow: 0 12px 30px -12px var(--glow);
+    transition: transform 0.18s ease, background-position 0.5s ease;
+  }
+  .link.ghost {
+    background: transparent; color: var(--fg);
+    border: 1px solid var(--card-line); box-shadow: none;
+  }
+  .link:hover { transform: translateY(-2px); background-position: 100% 0; }
+  .link:focus-visible { outline: 2px solid var(--b); outline-offset: 3px; }
+
+  footer {
+    position: relative; z-index: 2;
+    margin-top: 2.5rem;
+    text-align: center;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.72rem; letter-spacing: 0.08em;
+    color: var(--fg-dim); opacity: 0.7;
+  }
+
+  @media (max-width: 560px) {
+    .hero { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+    .hero .eyebrow { margin-inline: auto; }
+    .tags, .links { justify-content: center; }
+    .nav-btn span.label { display: none; }
+    .nav-btn { padding: 0 0.95rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+    .reveal { opacity: 1; transform: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="aurora" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+<div class="grid" aria-hidden="true"></div>
+
+<a class="nav-btn" href="index.html">← <span class="label">Home</span></a>
+<button class="toggle" id="theme" aria-label="Toggle colour theme" title="Toggle theme">🌙</button>
+
+<main>
+
+  <!-- ===== hero ===== -->
+  <section class="panel hero reveal">
+    <div class="avatar" aria-hidden="true">YN</div>
+    <div>
+      <span class="eyebrow"><span class="dot"></span> Available for work</span>
+      <h1>Your Name</h1>
+      <p class="role">Software Engineer · Building things for the web</p>
+      <div class="tags">
+        <span class="tag">JavaScript</span>
+        <span class="tag">Python</span>
+        <span class="tag">Kubernetes</span>
+        <span class="tag">CI/CD</span>
+        <span class="tag">Cloud</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== bio ===== -->
+  <section class="panel reveal">
+    <h2>About me</h2>
+    <p>
+      Hi — I'm <strong>Your Name</strong>. I build software that people actually enjoy using: fast,
+      accessible, and thoughtfully put together from the database up to the last pixel.
+    </p>
+    <p>
+      My work sits somewhere between engineering and design. I like untangling messy systems,
+      automating the boring parts, and leaving codebases a little cleaner than I found them.
+    </p>
+    <p>
+      Away from the keyboard you'll find me reading, walking somewhere with no signal, and drinking
+      more coffee than is strictly advisable.
+    </p>
+  </section>
+
+  <!-- ===== stats ===== -->
+  <section class="panel stats reveal">
+    <div class="stat"><div class="num" data-count="8">0</div><div class="lbl">Years coding</div></div>
+    <div class="stat"><div class="num" data-count="42">0</div><div class="lbl">Projects shipped</div></div>
+    <div class="stat"><div class="num" data-count="15">0</div><div class="lbl">Technologies</div></div>
+    <div class="stat"><div class="num" data-count="99" data-suffix="%">0</div><div class="lbl">Uptime chased</div></div>
+  </section>
+
+  <!-- ===== skills ===== -->
+  <section class="panel reveal">
+    <h2>What I work with</h2>
+    <div class="skills">
+      <div>
+        <div class="skill-head"><span>Frontend — HTML, CSS, JavaScript</span><span>90%</span></div>
+        <div class="bar"><i data-fill="90"></i></div>
+      </div>
+      <div>
+        <div class="skill-head"><span>Backend — APIs &amp; services</span><span>85%</span></div>
+        <div class="bar"><i data-fill="85"></i></div>
+      </div>
+      <div>
+        <div class="skill-head"><span>DevOps — Docker, Kubernetes, GitOps</span><span>75%</span></div>
+        <div class="bar"><i data-fill="75"></i></div>
+      </div>
+      <div>
+        <div class="skill-head"><span>Design — UI, layout, motion</span><span>70%</span></div>
+        <div class="bar"><i data-fill="70"></i></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== timeline ===== -->
+  <section class="panel reveal">
+    <h2>The short version</h2>
+    <div class="timeline">
+      <div class="item">
+        <div class="when">2023 — now</div>
+        <div class="what">Senior Engineer · Company</div>
+        <p>Leading delivery on platform work, mentoring, and keeping the pipelines green.</p>
+      </div>
+      <div class="item">
+        <div class="when">2020 — 2023</div>
+        <div class="what">Engineer · Previous Company</div>
+        <p>Built and shipped customer-facing features end to end, from schema to CSS.</p>
+      </div>
+      <div class="item">
+        <div class="when">2018 — 2020</div>
+        <div class="what">Where it started</div>
+        <p>First professional role, a lot of late nights, and the habits that still stick.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== contact ===== -->
+  <section class="panel reveal">
+    <h2>Say hello</h2>
+    <p>Got a project, a question, or just want to talk shop? The inbox is open.</p>
+    <div class="links">
+      <a class="link" href="mailto:you@example.com">✉️ Email me</a>
+      <a class="link ghost" href="https://github.com/" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+      <a class="link ghost" href="https://linkedin.com/" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
+    </div>
+  </section>
+
+</main>
+
+<footer>crafted with html · css · a little javascript</footer>
+
+<script>
+  const root = document.documentElement;
+  const themeBtn = document.getElementById('theme');
+
+  /* --- theme, shared with the home page --- */
+  const saved = localStorage.getItem('hw-theme');
+  if (saved) root.dataset.theme = saved;
+  const syncIcon = () => themeBtn.textContent = root.dataset.theme === 'dark' ? '🌙' : '☀️';
+  syncIcon();
+
+  themeBtn.addEventListener('click', () => {
+    root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+    localStorage.setItem('hw-theme', root.dataset.theme);
+    syncIcon();
+  });
+
+  /* --- reveal panels, fill skill bars, count up stats --- */
+  const countUp = (el) => {
+    const target = +el.dataset.count;
+    const suffix = el.dataset.suffix || '';
+    const start = performance.now();
+    const step = (now) => {
+      const t = Math.min((now - start) / 1400, 1);
+      const eased = 1 - Math.pow(1 - t, 3);
+      el.textContent = Math.round(target * eased) + suffix;
+      if (t < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  };
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('in');
+      entry.target.querySelectorAll('[data-fill]').forEach((bar, i) => {
+        setTimeout(() => bar.style.width = bar.dataset.fill + '%', 150 + i * 120);
+      });
+      entry.target.querySelectorAll('[data-count]').forEach(countUp);
+      io.unobserve(entry.target);
+    });
+  }, { threshold: 0.2 });
+
+  document.querySelectorAll('.reveal').forEach((el, i) => {
+    el.style.transitionDelay = (i * 70) + 'ms';
+    io.observe(el);
+  });
+</script>
+</body>
+</html>

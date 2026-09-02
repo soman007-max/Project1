@@ -183,7 +183,7 @@
     justify-content: center;
   }
 
-  button {
+  button, .btn {
     font: inherit;
     font-weight: 700;
     font-size: 0.95rem;
@@ -191,6 +191,10 @@
     border-radius: 999px;
     border: 1px solid transparent;
     cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
     color: #fff;
     background: linear-gradient(120deg, var(--a), var(--b));
     background-size: 200% 100%;
@@ -198,16 +202,16 @@
     transition: transform 0.18s ease, background-position 0.5s ease, box-shadow 0.3s ease;
   }
 
-  button.ghost {
+  button.ghost, .btn.ghost {
     background: transparent;
     color: var(--fg);
     border-color: var(--card-line);
     box-shadow: none;
   }
 
-  button:hover { transform: translateY(-2px); background-position: 100% 0; }
-  button:active { transform: translateY(0) scale(0.98); }
-  button:focus-visible { outline: 2px solid var(--b); outline-offset: 3px; }
+  button:hover, .btn:hover { transform: translateY(-2px); background-position: 100% 0; }
+  button:active, .btn:active { transform: translateY(0) scale(0.98); }
+  button:focus-visible, .btn:focus-visible { outline: 2px solid var(--b); outline-offset: 3px; }
 
   /* ---------- theme toggle ---------- */
   .toggle {
@@ -271,6 +275,7 @@
   <div class="actions">
     <button id="celebrate">✨ Celebrate</button>
     <button class="ghost" id="greet">Say hello</button>
+    <a class="btn ghost" href="about.html">About me →</a>
   </div>
 </main>
 
