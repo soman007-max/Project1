@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hello World</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;400;700;900&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-0: #05060f;
+    --bg-1: #0b0f24;
+    --fg: #eef1ff;
+    --fg-dim: #a4abd6;
+    --card: rgba(255, 255, 255, 0.05);
+    --card-line: rgba(255, 255, 255, 0.14);
+    --glow: rgba(120, 140, 255, 0.35);
+    --a: #7c5cff;
+    --b: #29d3ff;
+    --c: #ff5ca8;
+    --d: #ffd166;
+  }
+
+  [data-theme="light"] {
+    --bg-0: #eef1fb;
+    --bg-1: #dfe6ff;
+    --fg: #10132b;
+    --fg-dim: #4c5480;
+    --card: rgba(255, 255, 255, 0.55);
+    --card-line: rgba(20, 24, 60, 0.12);
+    --glow: rgba(90, 110, 255, 0.25);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body { height: 100%; }
+
+  body {
+    margin: 0;
+    display: grid;
+    place-items: center;
+    font-family: "Outfit", system-ui, -apple-system, "Segoe UI", sans-serif;
+    color: var(--fg);
+    background: var(--bg-0);
+    overflow: hidden;
+    transition: background 0.6s ease, color 0.6s ease;
+  }
+
+  /* ---------- animated aurora backdrop ---------- */
+  .aurora {
+    position: fixed;
+    inset: -30%;
+    z-index: 0;
+    filter: blur(90px);
+    opacity: 0.85;
+    pointer-events: none;
+  }
+
+  .aurora span {
+    position: absolute;
+    display: block;
+    width: 46vmax;
+    height: 46vmax;
+    border-radius: 50%;
+    mix-blend-mode: screen;
+    animation: drift 22s ease-in-out infinite;
+  }
+
+  [data-theme="light"] .aurora span { mix-blend-mode: multiply; opacity: 0.5; }
+
+  .aurora span:nth-child(1) { background: var(--a); top: 4%;  left: 8%;  animation-delay: -2s;  }
+  .aurora span:nth-child(2) { background: var(--b); top: 34%; left: 52%; animation-delay: -8s;  }
+  .aurora span:nth-child(3) { background: var(--c); top: 52%; left: 16%; animation-delay: -14s; }
+  .aurora span:nth-child(4) { background: var(--d); top: 10%; left: 60%; animation-delay: -19s; }
+
+  @keyframes drift {
+    0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+    33%      { transform: translate3d(12vw, 8vh, 0) scale(1.25); }
+    66%      { transform: translate3d(-9vw, -6vh, 0) scale(0.85); }
+  }
+
+  /* subtle grid overlay */
+  .grid {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background-image:
+      linear-gradient(var(--card-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--card-line) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(circle at 50% 45%, #000 0%, transparent 72%);
+    -webkit-mask-image: radial-gradient(circle at 50% 45%, #000 0%, transparent 72%);
+    opacity: 0.35;
+  }
+
+  /* ---------- glass card ---------- */
+  .card {
+    position: relative;
+    z-index: 2;
+    padding: clamp(2rem, 6vw, 4.25rem) clamp(1.75rem, 7vw, 5rem);
+    border-radius: 28px;
+    background: var(--card);
+    border: 1px solid var(--card-line);
+    backdrop-filter: blur(22px) saturate(160%);
+    -webkit-backdrop-filter: blur(22px) saturate(160%);
+    box-shadow:
+      0 30px 80px -20px rgba(0, 0, 0, 0.55),
+      inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    text-align: center;
+    max-width: min(92vw, 720px);
+    transform-style: preserve-3d;
+    transition: transform 0.25s cubic-bezier(.2,.8,.2,1), box-shadow 0.4s ease;
+    animation: rise 1s cubic-bezier(.2,.9,.2,1) both;
+  }
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(28px) scale(0.96); filter: blur(8px); }
+    to   { opacity: 1; transform: none; filter: none; }
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: clamp(0.65rem, 1.6vw, 0.78rem);
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--fg-dim);
+    padding: 0.45rem 0.95rem;
+    border: 1px solid var(--card-line);
+    border-radius: 999px;
+    margin-bottom: 1.6rem;
+  }
+
+  .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #38ef9b;
+    box-shadow: 0 0 0 0 rgba(56, 239, 155, 0.7);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    to { box-shadow: 0 0 0 12px rgba(56, 239, 155, 0); }
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(2.9rem, 13vw, 7.5rem);
+    font-weight: 900;
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+    background: linear-gradient(100deg, var(--a), var(--b), var(--d), var(--c), var(--a));
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: shimmer 9s linear infinite;
+  }
+
+  @keyframes shimmer {
+    to { background-position: 300% 50%; }
+  }
+
+  h1 .world { display: block; }
+
+  p.lede {
+    margin: 1.35rem auto 0;
+    max-width: 46ch;
+    font-size: clamp(0.98rem, 2.4vw, 1.18rem);
+    font-weight: 200;
+    line-height: 1.65;
+    color: var(--fg-dim);
+  }
+
+  .actions {
+    margin-top: 2.4rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.85rem;
+    justify-content: center;
+  }
+
+  button {
+    font: inherit;
+    font-weight: 700;
+    font-size: 0.95rem;
+    padding: 0.9rem 1.7rem;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    color: #fff;
+    background: linear-gradient(120deg, var(--a), var(--b));
+    background-size: 200% 100%;
+    box-shadow: 0 12px 30px -10px var(--glow);
+    transition: transform 0.18s ease, background-position 0.5s ease, box-shadow 0.3s ease;
+  }
+
+  button.ghost {
+    background: transparent;
+    color: var(--fg);
+    border-color: var(--card-line);
+    box-shadow: none;
+  }
+
+  button:hover { transform: translateY(-2px); background-position: 100% 0; }
+  button:active { transform: translateY(0) scale(0.98); }
+  button:focus-visible { outline: 2px solid var(--b); outline-offset: 3px; }
+
+  /* ---------- theme toggle ---------- */
+  .toggle {
+    position: fixed;
+    top: 1.25rem; right: 1.25rem;
+    z-index: 5;
+    width: 46px; height: 46px;
+    display: grid; place-items: center;
+    padding: 0;
+    border-radius: 50%;
+    font-size: 1.1rem;
+    background: var(--card);
+    border: 1px solid var(--card-line);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: none;
+    color: var(--fg);
+  }
+
+  /* ---------- confetti ---------- */
+  .spark {
+    position: fixed;
+    z-index: 4;
+    width: 9px; height: 9px;
+    border-radius: 2px;
+    pointer-events: none;
+    will-change: transform, opacity;
+  }
+
+  footer {
+    position: fixed;
+    bottom: 1.1rem;
+    z-index: 2;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    color: var(--fg-dim);
+    opacity: 0.7;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="aurora" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+<div class="grid" aria-hidden="true"></div>
+
+<button class="toggle" id="theme" aria-label="Toggle colour theme" title="Toggle theme">🌙</button>
+
+<main class="card" id="card">
+  <span class="eyebrow"><span class="dot"></span> System online</span>
+  <h1>Hello<span class="world">World</span></h1>
+  <p class="lede">A small page with big ambitions — glassmorphism, an animated aurora, and a gradient that never quite sits still.</p>
+  <div class="actions">
+    <button id="celebrate">✨ Celebrate</button>
+    <button class="ghost" id="greet">Say hello</button>
+  </div>
+</main>
+
+<footer>crafted with html · css · a little javascript</footer>
+
+<script>
+  const root = document.documentElement;
+  const card = document.getElementById('card');
+  const themeBtn = document.getElementById('theme');
+
+  /* --- theme toggle (remembers your choice) --- */
+  const saved = localStorage.getItem('hw-theme');
+  if (saved) root.dataset.theme = saved;
+  const syncIcon = () => themeBtn.textContent = root.dataset.theme === 'dark' ? '🌙' : '☀️';
+  syncIcon();
+
+  themeBtn.addEventListener('click', () => {
+    root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+    localStorage.setItem('hw-theme', root.dataset.theme);
+    syncIcon();
+  });
+
+  /* --- card tilts toward the cursor --- */
+  const maxTilt = 8;
+  window.addEventListener('pointermove', (e) => {
+    const r = card.getBoundingClientRect();
+    const x = (e.clientX - (r.left + r.width / 2)) / (r.width / 2);
+    const y = (e.clientY - (r.top + r.height / 2)) / (r.height / 2);
+    card.style.transform = `perspective(900px) rotateY(${x * maxTilt}deg) rotateX(${-y * maxTilt}deg)`;
+  });
+  window.addEventListener('pointerleave', () => card.style.transform = '');
+
+  /* --- confetti burst --- */
+  const palette = ['#7c5cff', '#29d3ff', '#ff5ca8', '#ffd166', '#38ef9b'];
+
+  function burst(count = 90) {
+    const r = card.getBoundingClientRect();
+    const originX = r.left + r.width / 2;
+    const originY = r.top + r.height / 2;
+
+    for (let i = 0; i < count; i++) {
+      const s = document.createElement('div');
+      s.className = 'spark';
+      s.style.background = palette[i % palette.length];
+      s.style.left = originX + 'px';
+      s.style.top = originY + 'px';
+      document.body.appendChild(s);
+
+      const angle = Math.random() * Math.PI * 2;
+      const dist = 120 + Math.random() * 320;
+      const dx = Math.cos(angle) * dist;
+      const dy = Math.sin(angle) * dist + 180; // gravity bias
+
+      s.animate([
+        { transform: 'translate(0,0) rotate(0deg)', opacity: 1 },
+        { transform: `translate(${dx}px, ${dy}px) rotate(${Math.random() * 720 - 360}deg)`, opacity: 0 }
+      ], {
+        duration: 900 + Math.random() * 900,
+        easing: 'cubic-bezier(.15,.75,.35,1)'
+      }).onfinish = () => s.remove();
+    }
+  }
+
+  document.getElementById('celebrate').addEventListener('click', () => burst());
+
+  /* --- rotating greetings --- */
+  const greetings = ['Hello', 'Hola', 'Bonjour', 'こんにちは', 'Ciao', 'Привет', 'مرحبا', 'Olá', 'नमस्ते', 'Hallo'];
+  let g = 0;
+  const headline = document.querySelector('h1');
+
+  document.getElementById('greet').addEventListener('click', () => {
+    g = (g + 1) % greetings.length;
+    headline.firstChild.textContent = greetings[g];
+    headline.animate(
+      [{ opacity: 0, transform: 'translateY(-14px)' }, { opacity: 1, transform: 'none' }],
+      { duration: 420, easing: 'cubic-bezier(.2,.9,.2,1)' }
+    );
+  });
+
+  /* --- a little welcome party on load --- */
+  window.addEventListener('load', () => setTimeout(() => burst(60), 600));
+</script>
+</body>
+</html>
